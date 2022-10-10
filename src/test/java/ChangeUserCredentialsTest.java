@@ -1,60 +1,74 @@
 import org.junit.After;
-import org.junit.Before;
 import org.junit.Test;
 import user.User;
 import user.UserClient;
 
 import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.notNullValue;
 
 public class ChangeUserCredentialsTest {
 
-    User user;
-    UserClient userClient = new UserClient();
+    UserClient userClient;
 
-    @Before
-    public void setup() {
-        user = User.getUser();
-        userClient.create(user);
-    }
 
     @After
     public void teardown() {
-        userClient.delete(user);
+        userClient.delete();
     }
 
 
     @Test
     public void loginUserCanChangeEmail(){
-        userClient.login(user)
+        userClient = new UserClient(User.getUser());
+        userClient.create();
+        userClient.changeEmail()
                 .statusCode(200)
-                .assertThat().body("id", notNullValue());
+                .assertThat().body("success", equalTo(true));
+    }
+
+    @Test
+    public void loginUserCanChangePassword() {
+        userClient = new UserClient(User.getUser());
+        userClient.create();
+        userClient.changePassword()
+                .statusCode(200)
+                .assertThat().body("success", equalTo(true));
     }
 
     @Test
     public void loginUserCanChangeName() {
-        userClient.loginWithWrongEmailAndPassword(user)
-                .statusCode(404)
-                .assertThat().body("message", equalTo("Учетная запись не найдена"));
+        userClient = new UserClient(User.getUser());
+        userClient.create();
+        userClient.changeName()
+                .statusCode(200)
+                .assertThat().body("success", equalTo(true));
     }
 
     @Test
     public void loginUserCanNotChangeEmailToExist() {
-        userClient.loginWithWrongEmail(user)
+        userClient = new UserClient(User.getUser());
+        userClient.create();
+        userClient.changeEmailToTheSame()
                 .statusCode(403)
                 .assertThat().body("message", equalTo("User with such email already exists"));
     }
 
     @Test
     public void unLoginUserCanNotChangeEmail() {
-        userClient.loginWithWrongPassword(user)
+        userClient.changeEmail()
+                .statusCode(401)
+                .assertThat().body("message", equalTo("You should be authorised"));
+    }
+
+    @Test
+    public void unLoginUserCanNotChangePassword() {
+        userClient.changePassword()
                 .statusCode(401)
                 .assertThat().body("message", equalTo("You should be authorised"));
     }
 
     @Test
     public void unLoginUserCanNotChangeName() {
-        userClient.login(User.getWithoutEmail())
+        userClient.changeName()
                 .statusCode(401)
                 .assertThat().body("message", equalTo("You should be authorised"));
     }

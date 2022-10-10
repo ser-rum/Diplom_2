@@ -1,6 +1,5 @@
 import io.restassured.response.ValidatableResponse;
 import org.junit.After;
-import org.junit.Before;
 import org.junit.Test;
 import user.User;
 import user.UserClient;
@@ -12,21 +11,17 @@ public class CreateUserTest {
     User user;
     UserClient userClient;
 
-    @Before
-    public void setup() {
-        userClient = new UserClient();
-    }
 
     @After
     public void teardown() {
-        userClient.delete(user);
+        userClient.delete();
     }
 
 
     @Test
     public void userCanBeCreated(){
-        user = User.getUser();
-        ValidatableResponse response = userClient.create(user);
+        userClient = new UserClient(User.getUser());
+        ValidatableResponse response = userClient.getResponse();
         response.statusCode(200)
                 .assertThat().body("success", equalTo(true));
     }
@@ -34,36 +29,40 @@ public class CreateUserTest {
     @Test
     public void canNotCreateTwoSameUsers() {
         user = User.getUser();
-        userClient.create(user);
-        ValidatableResponse sameUserResponse = userClient.create(user);
+        userClient = new UserClient(user);
+        ValidatableResponse sameUserResponse = new UserClient(user).getResponse();
         sameUserResponse.statusCode(403)
                             .assertThat().body("message", equalTo("User already exists"));
     }
 
     @Test
     public void canNotCreateUserWithoutEmail() {
-        ValidatableResponse response = userClient.create(User.getWithoutEmail());
+        userClient = new UserClient(User.getWithoutEmail());
+        ValidatableResponse response = userClient.getResponse();
         response.statusCode(403)
                 .assertThat().body("message", equalTo("Email, password and name are required fields"));
     }
 
     @Test
     public void canNotCreateUserWithoutPassword() {
-        ValidatableResponse response = userClient.create(User.getWithoutPassword());
+        userClient = new UserClient(User.getWithoutPassword());
+        ValidatableResponse response = userClient.getResponse();
         response.statusCode(403)
                 .assertThat().body("message", equalTo("Email, password and name are required fields"));
     }
 
     @Test
     public void canNotCreateUserWithoutName() {
-        ValidatableResponse response = userClient.create(User.getWithoutName());
+        userClient = new UserClient(User.getWithoutName());
+        ValidatableResponse response = userClient.getResponse();
         response.statusCode(403)
                 .assertThat().body("message", equalTo("Email, password and name are required fields"));
     }
 
     @Test
     public void canNotCreateUserWithoutAllFields() {
-        ValidatableResponse response = userClient.create(User.getWithoutAllFields());
+        userClient = new UserClient(User.getWithoutAllFields());
+        ValidatableResponse response = userClient.getResponse();
         response.statusCode(403)
                 .assertThat().body("message", equalTo("Email, password and name are required fields"));
     }

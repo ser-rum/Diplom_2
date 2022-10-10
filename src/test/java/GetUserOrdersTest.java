@@ -8,26 +8,26 @@ import user.UserClient;
 import static org.hamcrest.Matchers.equalTo;
 
 public class GetUserOrdersTest {
-    User user;
-    UserClient userClient = new UserClient();
+
+    UserClient userClient;
+
 
     @After
     public void teardown() {
-        userClient.delete(user);
+        userClient.delete();
     }
 
+
     @Test
-    public void getAuthorizedUserOrders() {
-        user = User.getUser();
-        userClient.create(user);
-        userClient.login(user);
+    public void getOrdersWithAuthorization() {
+        userClient = new UserClient(User.getUser());
         ValidatableResponse response = new OrderClient().getUserOrders();
         response.statusCode(200)
                 .assertThat().body("success", equalTo(true));
     }
 
     @Test
-    public void getUnauthorizedUserOrders() {
+    public void getOrdersWithoutAuthorization() {
         ValidatableResponse response = new OrderClient().getUserOrders();
         response.statusCode(401)
                 .assertThat().body("message", equalTo("You should be authorised"));

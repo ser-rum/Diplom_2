@@ -39,8 +39,4 @@ public class UserCredentials {
     public String getLoginCredentials(){
         return "{\"email\": \"" + email + "\", \"password\": \"" + password + "\"}";
     }
-
-    public String getUserEmail(){
-        return "{\"email\": \"" + email + "\"}";
-    }
 }

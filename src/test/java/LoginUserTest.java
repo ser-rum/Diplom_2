@@ -1,5 +1,4 @@
 import org.junit.After;
-import org.junit.Before;
 import org.junit.Test;
 import user.User;
 import user.UserClient;
@@ -9,65 +8,74 @@ import static org.hamcrest.Matchers.equalTo;
 public class LoginUserTest {
 
     User user;
-    UserClient userClient = new UserClient();
+    UserClient userClient;
 
-    @Before
-    public void setup() {
-        user = User.getUser();
-        userClient.create(user);
-    }
 
     @After
     public void teardown() {
-        userClient.delete(user);
+        userClient.delete();
     }
 
 
     @Test
     public void canLogin(){
-        userClient.login(user)
+        user = User.getUser();
+        userClient = new UserClient(user);
+        userClient.login()
                 .statusCode(200)
                 .assertThat().body("success", equalTo(true));
     }
 
     @Test
     public void canNotLoginWithWrongEmail() {
-        userClient.loginWithWrongEmail(user)
+        user = User.getUser();
+        userClient = new UserClient(user);
+        userClient.loginWithWrongEmail()
                 .statusCode(401)
                 .assertThat().body("message", equalTo("email or password are incorrect"));
     }
 
     @Test
     public void canNotLoginWithWrongPassword() {
-        userClient.loginWithWrongPassword(user)
+        user = User.getUser();
+        userClient = new UserClient(user);
+        userClient.loginWithWrongPassword()
                 .statusCode(401)
                 .assertThat().body("message", equalTo("email or password are incorrect"));
     }
 
     @Test
     public void canNotLoginWithWrongEmailAndPassword() {
-        userClient.loginWithWrongEmailAndPassword(user)
+        user = User.getUser();
+        userClient = new UserClient(user);
+        userClient.loginWithWrongEmailAndPassword()
                 .statusCode(401)
                 .assertThat().body("message", equalTo("email or password are incorrect"));
     }
 
     @Test
     public void canNotLoginWithoutEmail() {
-        userClient.login(User.getWithoutEmail())
+        user = User.getWithoutEmail();
+        userClient = new UserClient(user);
+        userClient.login()
                 .statusCode(401)
                 .assertThat().body("message", equalTo("email or password are incorrect"));
     }
 
     @Test
     public void canNotLoginWithoutPassword() {
-        userClient.login(User.getWithoutPassword())
+        user = User.getWithoutPassword();
+        userClient = new UserClient(user);
+        userClient.login()
                 .statusCode(401)
                 .assertThat().body("message", equalTo("email or password are incorrect"));
     }
 
     @Test
     public void canNotLoginWithoutAllFields() {
-        userClient.login(User.getWithoutAllFields())
+        user = User.getWithoutAllFields();
+        userClient = new UserClient(user);
+        userClient.login()
                 .statusCode(401)
                 .assertThat().body("message", equalTo("email or password are incorrect"));
     }
