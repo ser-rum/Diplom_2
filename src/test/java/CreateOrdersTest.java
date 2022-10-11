@@ -14,7 +14,9 @@ public class CreateOrdersTest {
 
     @After
     public void teardown() {
-        userClient.delete();
+        if (userClient != null){
+            userClient.delete();
+        }
     }
 
     @Test

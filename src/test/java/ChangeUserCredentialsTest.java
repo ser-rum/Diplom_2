@@ -21,6 +21,7 @@ public class ChangeUserCredentialsTest {
     public void loginUserCanChangeEmail(){
         user = User.getUser();
         userClient = new UserClient(user);
+        userClient.login();
         userClient.changeEmail()
                 .statusCode(200)
                 .assertThat().body("success", equalTo(true));

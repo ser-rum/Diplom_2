@@ -14,14 +14,15 @@ public class GetUserOrdersTest {
 
     @After
     public void teardown() {
-        userClient.delete();
+        if (userClient != null){
+            userClient.delete();
+        }
     }
 
 
     @Test
     public void getOrdersWithAuthorization() {
         userClient = new UserClient(User.getUser());
-        userClient.login();
         ValidatableResponse response = new OrderClient().getUserOrders();
         response.statusCode(200)
                 .assertThat().body("success", equalTo(true));

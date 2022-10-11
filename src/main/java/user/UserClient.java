@@ -35,9 +35,11 @@ public class UserClient extends BaseClient {
     }
 
     public String getAccessToken(){
-        return response
+        String token = response
                 .extract()
                 .path("accessToken");
+//        String[] splitToken = token.split(" ");
+        return token/*splitToken[1]*/;
     }
 
     public ValidatableResponse getResponse(){
@@ -79,7 +81,7 @@ public class UserClient extends BaseClient {
     public void logout () {
         String LOGOUT = ROOT + "/logout";
         getSpec()
-                .body("{\"token\": \"" + refreshToken + "\"}")
+                .body("{\"token\": \"{{" + refreshToken + "}}\"}")
                 .when()
                 .post(LOGOUT)
                 .then().log().all();
@@ -93,7 +95,7 @@ public class UserClient extends BaseClient {
 
     public ValidatableResponse changeEmail (){
         return getSpec()
-                .body("{\"authorization\": \"" + accessToken + "\", " +
+                .body("{\"authorization\": \"{{" + accessToken + "}}\", " +
                         "\"email\": \"" + User.getUser().getEmail() + "\"}")
                 .when()
                 .patch(USER)
@@ -102,7 +104,7 @@ public class UserClient extends BaseClient {
 
     public ValidatableResponse changeEmailToTheSame (){
         return getSpec()
-                .body("{\"authorization\": \"" + accessToken + "\", " +
+                .body("{\"authorization\": \"{{" + accessToken + "}}\", " +
                         "\"email\": \"" + user.getEmail() + "\"}")
                 .when()
                 .patch(USER)
@@ -111,7 +113,7 @@ public class UserClient extends BaseClient {
 
     public ValidatableResponse changePassword (){
         return getSpec()
-                .body("{\"authorization\": \"" + accessToken + "\", " +
+                .body("{\"authorization\": \"{{" + accessToken + "}}\", " +
                         "\"password\": \"newP@ssw0rd\"}")
                 .when()
                 .patch(USER)
@@ -120,7 +122,7 @@ public class UserClient extends BaseClient {
 
     public ValidatableResponse changeName (){
         return getSpec()
-                .body("{\"authorization\": \"" + accessToken + "\", " +
+                .body("{\"authorization\": \"{{" + accessToken + "}}\", " +
                         "\"name\": \"" + User.getUser().getName() + "\"}")
                 .when()
                 .patch(USER)
@@ -130,7 +132,7 @@ public class UserClient extends BaseClient {
     public void delete() {
         if (accessToken != null) {
             getSpec()
-                .body("{\"token\": \"" + accessToken + "\"}")
+                .body("{\"token\": \"{{" + accessToken + "}}\"}")
                 .when()
                 .delete(ROOT + "/user");
         }
