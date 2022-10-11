@@ -21,6 +21,7 @@ public class GetUserOrdersTest {
     @Test
     public void getOrdersWithAuthorization() {
         userClient = new UserClient(User.getUser());
+        userClient.login();
         ValidatableResponse response = new OrderClient().getUserOrders();
         response.statusCode(200)
                 .assertThat().body("success", equalTo(true));

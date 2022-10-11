@@ -7,6 +7,7 @@ public class UserClient extends BaseClient {
 
     private final User user;
     private final String accessToken;
+    private final String refreshToken;
     private final ValidatableResponse response;
 
     private final String ROOT = "/auth";
@@ -20,6 +21,7 @@ public class UserClient extends BaseClient {
         this.user = user;
         this.response = create();
         this.accessToken = getAccessToken();
+        this.refreshToken = getRefreshToken();
     }
 
 
@@ -72,6 +74,21 @@ public class UserClient extends BaseClient {
                 .when()
                 .post(LOGIN)
                 .then().log().all();
+    }
+
+    public void logout () {
+        String LOGOUT = ROOT + "/logout";
+        getSpec()
+                .body("{\"token\": \"" + refreshToken + "\"}")
+                .when()
+                .post(LOGOUT)
+                .then().log().all();
+    }
+
+    public String getRefreshToken(){
+        return response
+                .extract()
+                .path("refreshToken");
     }
 
     public ValidatableResponse changeEmail (){

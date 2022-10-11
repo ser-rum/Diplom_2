@@ -7,6 +7,7 @@ import static org.hamcrest.Matchers.equalTo;
 
 public class ChangeUserCredentialsTest {
 
+    User user;
     UserClient userClient;
 
 
@@ -18,8 +19,8 @@ public class ChangeUserCredentialsTest {
 
     @Test
     public void loginUserCanChangeEmail(){
-        userClient = new UserClient(User.getUser());
-        userClient.create();
+        user = User.getUser();
+        userClient = new UserClient(user);
         userClient.changeEmail()
                 .statusCode(200)
                 .assertThat().body("success", equalTo(true));
@@ -27,8 +28,8 @@ public class ChangeUserCredentialsTest {
 
     @Test
     public void loginUserCanChangePassword() {
-        userClient = new UserClient(User.getUser());
-        userClient.create();
+        user = User.getUser();
+        userClient = new UserClient(user);
         userClient.changePassword()
                 .statusCode(200)
                 .assertThat().body("success", equalTo(true));
@@ -36,8 +37,8 @@ public class ChangeUserCredentialsTest {
 
     @Test
     public void loginUserCanChangeName() {
-        userClient = new UserClient(User.getUser());
-        userClient.create();
+        user = User.getUser();
+        userClient = new UserClient(user);
         userClient.changeName()
                 .statusCode(200)
                 .assertThat().body("success", equalTo(true));
@@ -45,8 +46,8 @@ public class ChangeUserCredentialsTest {
 
     @Test
     public void loginUserCanNotChangeEmailToExist() {
-        userClient = new UserClient(User.getUser());
-        userClient.create();
+        user = User.getUser();
+        userClient = new UserClient(user);
         userClient.changeEmailToTheSame()
                 .statusCode(403)
                 .assertThat().body("message", equalTo("User with such email already exists"));
