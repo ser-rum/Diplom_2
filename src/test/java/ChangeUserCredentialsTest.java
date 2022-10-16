@@ -1,4 +1,6 @@
+import io.restassured.response.ValidatableResponse;
 import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 import user.User;
 import user.UserClient;
@@ -9,68 +11,60 @@ public class ChangeUserCredentialsTest {
 
     User user;
     UserClient userClient;
+    private ValidatableResponse response;
 
+
+    @Before
+    public void setUp(){
+        user = User.getUser();
+        userClient = new UserClient(user);
+        response = userClient.create();
+    }
 
     @After
     public void teardown() {
-        userClient.delete();
+        userClient.delete(response);
     }
 
 
     @Test
     public void loginUserCanChangeEmail(){
-        user = User.getUser();
-        userClient = new UserClient(user);
-        userClient.login();
-        userClient.changeEmail()
+        userClient.changeEmail(response)
                 .statusCode(200)
                 .assertThat().body("success", equalTo(true));
     }
 
     @Test
     public void loginUserCanChangePassword() {
-        user = User.getUser();
-        userClient = new UserClient(user);
-        userClient.changePassword()
+        userClient.changePassword(response)
                 .statusCode(200)
                 .assertThat().body("success", equalTo(true));
     }
 
     @Test
     public void loginUserCanChangeName() {
-        user = User.getUser();
-        userClient = new UserClient(user);
-        userClient.changeName()
+        userClient.changeName(response)
                 .statusCode(200)
                 .assertThat().body("success", equalTo(true));
     }
 
     @Test
-    public void loginUserCanNotChangeEmailToExist() {
-        user = User.getUser();
-        userClient = new UserClient(user);
-        userClient.changeEmailToTheSame()
-                .statusCode(403)
-                .assertThat().body("message", equalTo("User with such email already exists"));
-    }
-
-    @Test
     public void unLoginUserCanNotChangeEmail() {
-        userClient.changeEmail()
+        userClient.changeEmailWithoutAuthorization()
                 .statusCode(401)
                 .assertThat().body("message", equalTo("You should be authorised"));
     }
 
     @Test
     public void unLoginUserCanNotChangePassword() {
-        userClient.changePassword()
+        userClient.changePasswordWithoutAuthorization()
                 .statusCode(401)
                 .assertThat().body("message", equalTo("You should be authorised"));
     }
 
     @Test
     public void unLoginUserCanNotChangeName() {
-        userClient.changeName()
+        userClient.changeNameWithoutAuthorization()
                 .statusCode(401)
                 .assertThat().body("message", equalTo("You should be authorised"));
     }

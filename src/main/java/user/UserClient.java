@@ -6,9 +6,6 @@ import io.restassured.response.ValidatableResponse;
 public class UserClient extends BaseClient {
 
     private final User user;
-    private final String accessToken;
-    private final String refreshToken;
-    private final ValidatableResponse response;
 
     private final String ROOT = "/auth";
     private final String LOGIN = ROOT + "/login";
@@ -19,9 +16,6 @@ public class UserClient extends BaseClient {
 
     public UserClient(User user){
         this.user = user;
-        this.response = create();
-        this.accessToken = getAccessToken();
-        this.refreshToken = getRefreshToken();
     }
 
 
@@ -34,16 +28,12 @@ public class UserClient extends BaseClient {
                 .then().log().all();
     }
 
-    public String getAccessToken(){
+    public String getAccessToken(ValidatableResponse response){
         String token = response
                 .extract()
                 .path("accessToken");
-//        String[] splitToken = token.split(" ");
-        return token/*splitToken[1]*/;
-    }
-
-    public ValidatableResponse getResponse(){
-        return response;
+        String[] splitToken = token.split(" ");
+        return splitToken[1];
     }
 
     public ValidatableResponse login () {
@@ -78,88 +68,60 @@ public class UserClient extends BaseClient {
                 .then().log().all();
     }
 
-    public void logout () {
-        String LOGOUT = ROOT + "/logout";
+    public ValidatableResponse changeEmail (ValidatableResponse response){
+        return getSpec()
+                .auth().oauth2(getAccessToken(response))
+                .body("{\"email\": \"" + User.getUser().getEmail() + "\"}")
+                .when()
+                .patch(USER)
+                .then().log().all();
+    }
+
+    public ValidatableResponse changeEmailWithoutAuthorization(){
+        return getSpec()
+                .body("{\"email\": \"" + User.getUser().getEmail() + "\"}")
+                .when()
+                .patch(USER)
+                .then().log().all();
+    }
+
+    public ValidatableResponse changePassword (ValidatableResponse response){
+        return getSpec()
+                .auth().oauth2(getAccessToken(response))
+                .body("{\"password\": \"newP@ssw0rd\"}")
+                .when()
+                .patch(USER)
+                .then().log().all();
+    }
+
+    public ValidatableResponse changePasswordWithoutAuthorization (){
+        return getSpec()
+                .body("{\"password\": \"newP@ssw0rd\"}")
+                .when()
+                .patch(USER)
+                .then().log().all();
+    }
+
+    public ValidatableResponse changeName (ValidatableResponse response){
+        return getSpec()
+                .auth().oauth2(getAccessToken(response))
+                .body("{\"name\": \"" + User.getUser().getName() + "\"}")
+                .when()
+                .patch(USER)
+                .then().log().all();
+    }
+
+    public ValidatableResponse changeNameWithoutAuthorization (){
+        return getSpec()
+                .body("{\"name\": \"" + User.getUser().getName() + "\"}")
+                .when()
+                .patch(USER)
+                .then().log().all();
+    }
+
+    public void delete(ValidatableResponse response) {
         getSpec()
-                .body("{\"token\": \"{{" + refreshToken + "}}\"}")
-                .when()
-                .post(LOGOUT)
-                .then().log().all();
-    }
-
-    public String getRefreshToken(){
-        return response
-                .extract()
-                .path("refreshToken");
-    }
-
-    public ValidatableResponse changeEmail (){
-        return getSpec()
-                .body("{\"authorization\": \"{{" + accessToken + "}}\", " +
-                        "\"email\": \"" + User.getUser().getEmail() + "\"}")
-                .when()
-                .patch(USER)
-                .then().log().all();
-    }
-
-    public ValidatableResponse changeEmailToTheSame (){
-        return getSpec()
-                .body("{\"authorization\": \"{{" + accessToken + "}}\", " +
-                        "\"email\": \"" + user.getEmail() + "\"}")
-                .when()
-                .patch(USER)
-                .then().log().all();
-    }
-
-    public ValidatableResponse changePassword (){
-        return getSpec()
-                .body("{\"authorization\": \"{{" + accessToken + "}}\", " +
-                        "\"password\": \"newP@ssw0rd\"}")
-                .when()
-                .patch(USER)
-                .then().log().all();
-    }
-
-    public ValidatableResponse changeName (){
-        return getSpec()
-                .body("{\"authorization\": \"{{" + accessToken + "}}\", " +
-                        "\"name\": \"" + User.getUser().getName() + "\"}")
-                .when()
-                .patch(USER)
-                .then().log().all();
-    }
-
-    public void delete() {
-        if (accessToken != null) {
-            getSpec()
-                .body("{\"token\": \"{{" + accessToken + "}}\"}")
-                .when()
+                .auth().oauth2(getAccessToken(response))
                 .delete(ROOT + "/user");
-        }
     }
 }
-
-
-
-
-//    public void logout (User user) {
-//        getSpec()
-//                .body("{\"token\": \"" + getRefreshToken(user) + "\"}")
-//                .when()
-//                .post(LOGOUT)
-//                .then().log().all();
-//    }
-
-//    public String getRefreshToken(User user){
-//        return login(user)
-//                .extract()
-//                .path("refreshToken");
-//    }
-
-//    public ValidatableResponse resetPassword(User user) {
-//        return getSpec()
-//                .body(new UserCredentials(user).getUserEmail())
-//                .when()
-//                .post(PASSWORD_RESET)
-//                .then().log().all();
-//    }

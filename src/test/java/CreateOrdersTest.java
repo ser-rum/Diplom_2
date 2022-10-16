@@ -1,6 +1,7 @@
 import io.restassured.response.ValidatableResponse;
 import order.OrderClient;
 import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 import user.User;
 import user.UserClient;
@@ -9,20 +10,28 @@ import static org.hamcrest.Matchers.equalTo;
 
 public class CreateOrdersTest {
 
+    User user;
     UserClient userClient;
+    ValidatableResponse response;
+    String accessToken;
 
+    @Before
+    public void setUp(){
+        user = User.getUser();
+        userClient = new UserClient(user);
+        response = userClient.create();
+        accessToken = userClient.getAccessToken(response);
+    }
 
     @After
     public void teardown() {
-        if (userClient != null){
-            userClient.delete();
-        }
+        userClient.delete(response);
     }
 
     @Test
     public void canCreateWithIngredientsAndAuthorization() {
-        userClient = new UserClient(User.getUser());
-        ValidatableResponse response = new OrderClient().createWithRightIngredient();
+        OrderClient orderClient = new OrderClient();
+        ValidatableResponse response = orderClient.createWithRightIngredient(accessToken);
         response.statusCode(200)
                 .assertThat().body("success", equalTo(true));
     }
@@ -36,8 +45,7 @@ public class CreateOrdersTest {
 
     @Test
     public void canNotCreateWithoutIngredientsButWithAuthorization() {
-        userClient = new UserClient(User.getUser());
-        ValidatableResponse response = new OrderClient().createWithoutIngredients();
+        ValidatableResponse response = new OrderClient().createWithoutIngredients(accessToken);
         response.statusCode(400)
                 .assertThat().body("message", equalTo("Ingredient ids must be provided"));
     }
@@ -51,8 +59,7 @@ public class CreateOrdersTest {
 
     @Test
     public void canNotCreateWithWrongIngredientsButWithAuthorization() {
-        userClient = new UserClient(User.getUser());
-        ValidatableResponse response = new OrderClient().createWithWrongIngredient();
+        ValidatableResponse response = new OrderClient().createWithWrongIngredient(accessToken);
         response.statusCode(500);
     }
 
