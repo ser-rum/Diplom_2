@@ -24,11 +24,11 @@ public class CreateUserTest {
     public void canNotCreateTwoSameUsers() {
         User user = User.getUser();
         userClient = new UserClient(user);
-        userClient.create();
-        response = new UserClient(user).create();
-        response.statusCode(403)
+        response = userClient.create();
+        ValidatableResponse newResponse = new UserClient(user).create();
+        newResponse.statusCode(403)
                             .assertThat().body("message", equalTo("User already exists"));
-        userClient.delete(userClient.login());
+        userClient.delete(response);
     }
 
     @Test
