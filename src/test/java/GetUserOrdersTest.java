@@ -1,3 +1,4 @@
+import io.qameta.allure.junit4.DisplayName;
 import io.restassured.response.ValidatableResponse;
 import order.OrderClient;
 import org.junit.After;
@@ -31,6 +32,7 @@ public class GetUserOrdersTest {
 
 
     @Test
+    @DisplayName("Можно получить список заказов, если пользователь авторизован")
     public void getOrdersWithAuthorization() {
         ValidatableResponse response = new OrderClient().getUserOrders(accessToken);
         response.statusCode(200)
@@ -38,6 +40,7 @@ public class GetUserOrdersTest {
     }
 
     @Test
+    @DisplayName("Нельзя получить список заказов без авторизации")
     public void getOrdersWithoutAuthorization() {
         ValidatableResponse response = new OrderClient().getUserOrders();
         response.statusCode(401)

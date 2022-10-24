@@ -1,5 +1,7 @@
 package user;
 
+import io.qameta.allure.Step;
+
 public class UserCredentials {
 
     private final String email;
@@ -31,11 +33,13 @@ public class UserCredentials {
         this.name = user.getName();
     }
 
+    @Step("Получение регистрационные данные")
     public String getRegistrationCredentials(){
         return "{\"email\": \"" + email + "\", \"password\": \""
                 + password + "\", \"name\": \"" + name + "\"}";
     }
 
+    @Step("Получение авторизационные данные")
     public String getLoginCredentials(){
         return "{\"email\": \"" + email + "\", \"password\": \"" + password + "\"}";
     }

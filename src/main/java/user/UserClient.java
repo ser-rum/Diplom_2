@@ -1,6 +1,7 @@
 package user;
 
 import base.BaseClient;
+import io.qameta.allure.Step;
 import io.restassured.response.ValidatableResponse;
 
 public class UserClient extends BaseClient {
@@ -19,6 +20,7 @@ public class UserClient extends BaseClient {
     }
 
 
+    @Step("Создание пользователя")
     public ValidatableResponse create() {
         String REGISTRATION = ROOT + "/register";
         return getSpec()
@@ -28,6 +30,7 @@ public class UserClient extends BaseClient {
                 .then().log().all();
     }
 
+    @Step("Получение токена доступа")
     public String getAccessToken(ValidatableResponse response){
         String token = response
                 .extract()
@@ -36,6 +39,7 @@ public class UserClient extends BaseClient {
         return splitToken[1];
     }
 
+    @Step("Авторизация")
     public ValidatableResponse login () {
         return getSpec()
                 .body(new UserCredentials(user).getLoginCredentials())
@@ -44,6 +48,7 @@ public class UserClient extends BaseClient {
                 .then().log().all();
     }
 
+    @Step("Авторизация с неправильной электронной почтой")
     public ValidatableResponse loginWithWrongEmail () {
         return getSpec()
                 .body(new UserCredentials(wrongEmail, user).getLoginCredentials())
@@ -52,6 +57,7 @@ public class UserClient extends BaseClient {
                 .then().log().all();
     }
 
+    @Step("Авторизация с неправильным паролем")
     public ValidatableResponse loginWithWrongPassword () {
         return getSpec()
                 .body(new UserCredentials(user, wrongPassword).getLoginCredentials())
@@ -60,6 +66,7 @@ public class UserClient extends BaseClient {
                 .then().log().all();
     }
 
+    @Step("Авторизация с неправильными электронной почтой и паролем")
     public ValidatableResponse loginWithWrongEmailAndPassword () {
         return getSpec()
                 .body(new UserCredentials(wrongEmail, wrongPassword, user).getLoginCredentials())
@@ -68,6 +75,7 @@ public class UserClient extends BaseClient {
                 .then().log().all();
     }
 
+    @Step("Изменение электронной почты")
     public ValidatableResponse changeEmail (ValidatableResponse response){
         return getSpec()
                 .auth().oauth2(getAccessToken(response))
@@ -77,6 +85,7 @@ public class UserClient extends BaseClient {
                 .then().log().all();
     }
 
+    @Step("Изменение электронной почты без авторизации")
     public ValidatableResponse changeEmailWithoutAuthorization(){
         return getSpec()
                 .body("{\"email\": \"" + User.getUser().getEmail() + "\"}")
@@ -85,6 +94,7 @@ public class UserClient extends BaseClient {
                 .then().log().all();
     }
 
+    @Step("Изменение пароля")
     public ValidatableResponse changePassword (ValidatableResponse response){
         return getSpec()
                 .auth().oauth2(getAccessToken(response))
@@ -94,6 +104,7 @@ public class UserClient extends BaseClient {
                 .then().log().all();
     }
 
+    @Step("Изменение пароля без авторизации")
     public ValidatableResponse changePasswordWithoutAuthorization (){
         return getSpec()
                 .body("{\"password\": \"newP@ssw0rd\"}")
@@ -102,6 +113,7 @@ public class UserClient extends BaseClient {
                 .then().log().all();
     }
 
+    @Step("Изменение имени")
     public ValidatableResponse changeName (ValidatableResponse response){
         return getSpec()
                 .auth().oauth2(getAccessToken(response))
@@ -111,6 +123,7 @@ public class UserClient extends BaseClient {
                 .then().log().all();
     }
 
+    @Step("Изменение имени без авторизации")
     public ValidatableResponse changeNameWithoutAuthorization (){
         return getSpec()
                 .body("{\"name\": \"" + User.getUser().getName() + "\"}")
@@ -119,6 +132,7 @@ public class UserClient extends BaseClient {
                 .then().log().all();
     }
 
+    @Step("Удаление пользователя")
     public void delete(ValidatableResponse response) {
         getSpec()
                 .auth().oauth2(getAccessToken(response))

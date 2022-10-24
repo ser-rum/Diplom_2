@@ -1,3 +1,4 @@
+import io.qameta.allure.junit4.DisplayName;
 import io.restassured.response.ValidatableResponse;
 import org.junit.After;
 import org.junit.Before;
@@ -28,6 +29,7 @@ public class ChangeUserCredentialsTest {
 
 
     @Test
+    @DisplayName("Зарегистрированный пользователь может изменить электронную почту")
     public void loginUserCanChangeEmail(){
         userClient.changeEmail(response)
                 .statusCode(200)
@@ -35,6 +37,7 @@ public class ChangeUserCredentialsTest {
     }
 
     @Test
+    @DisplayName("Зарегистрированый пользователь может изменить пароль")
     public void loginUserCanChangePassword() {
         userClient.changePassword(response)
                 .statusCode(200)
@@ -42,6 +45,7 @@ public class ChangeUserCredentialsTest {
     }
 
     @Test
+    @DisplayName("Зарегистрированный пользователь может изменить имя")
     public void loginUserCanChangeName() {
         userClient.changeName(response)
                 .statusCode(200)
@@ -49,6 +53,7 @@ public class ChangeUserCredentialsTest {
     }
 
     @Test
+    @DisplayName("Незарегистрированный пользователь не может изменить электронную почту")
     public void unLoginUserCanNotChangeEmail() {
         userClient.changeEmailWithoutAuthorization()
                 .statusCode(401)
@@ -56,6 +61,7 @@ public class ChangeUserCredentialsTest {
     }
 
     @Test
+    @DisplayName("Незарегистрированный пользователь не может изменить пароль")
     public void unLoginUserCanNotChangePassword() {
         userClient.changePasswordWithoutAuthorization()
                 .statusCode(401)
@@ -63,6 +69,7 @@ public class ChangeUserCredentialsTest {
     }
 
     @Test
+    @DisplayName("Незарегистрированный пользователь не может изменить имя")
     public void unLoginUserCanNotChangeName() {
         userClient.changeNameWithoutAuthorization()
                 .statusCode(401)

@@ -1,3 +1,4 @@
+import io.qameta.allure.junit4.DisplayName;
 import io.restassured.response.ValidatableResponse;
 import org.junit.Test;
 import user.User;
@@ -12,6 +13,7 @@ public class CreateUserTest {
 
 
     @Test
+    @DisplayName("Можно создать пользователя")
     public void userCanBeCreated(){
         userClient = new UserClient(User.getUser());
         response = userClient.create();
@@ -21,6 +23,7 @@ public class CreateUserTest {
     }
 
     @Test
+    @DisplayName("Нельзя создать два одинаковых пользователя")
     public void canNotCreateTwoSameUsers() {
         User user = User.getUser();
         userClient = new UserClient(user);
@@ -32,7 +35,8 @@ public class CreateUserTest {
     }
 
     @Test
-    public void     canNotCreateUserWithoutEmail() {
+    @DisplayName("Нельзя создать пользователя без электронной почты")
+    public void canNotCreateUserWithoutEmail() {
         userClient = new UserClient(User.getWithoutEmail());
         response = userClient.create();
         response.statusCode(403)
@@ -40,6 +44,7 @@ public class CreateUserTest {
     }
 
     @Test
+    @DisplayName("Нельзя создать пользователя без пароля")
     public void canNotCreateUserWithoutPassword() {
         userClient = new UserClient(User.getWithoutPassword());
         response = userClient.create();
@@ -48,6 +53,7 @@ public class CreateUserTest {
     }
 
     @Test
+    @DisplayName("Нельзя создать пользователя без имени")
     public void canNotCreateUserWithoutName() {
         userClient = new UserClient(User.getWithoutName());
         response = userClient.create();
@@ -56,6 +62,7 @@ public class CreateUserTest {
     }
 
     @Test
+    @DisplayName("Нельзя создать пользователя без всех полей")
     public void canNotCreateUserWithoutAllFields() {
         userClient = new UserClient(User.getWithoutAllFields());
         response = userClient.create();

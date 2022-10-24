@@ -1,5 +1,6 @@
 package user;
 
+import io.qameta.allure.Step;
 import org.apache.commons.lang3.RandomStringUtils;
 
 public class User {
@@ -13,6 +14,7 @@ public class User {
         this.name = name;
     }
 
+    @Step("Получение валидного пользователя")
     public static User getUser() {
         return new User(
                 RandomStringUtils.randomAlphanumeric(10) + "@ya.ru",
@@ -21,6 +23,7 @@ public class User {
         );
     }
 
+    @Step("Получение пользователя без электронной почты")
     public static User getWithoutEmail() {
         return new User(
                 "",
@@ -29,6 +32,7 @@ public class User {
         );
     }
 
+    @Step("Получение пользователя без пароля")
     public static User getWithoutPassword() {
         return new User(
                 RandomStringUtils.randomAlphanumeric(10) + "@ya.ru",
@@ -37,6 +41,7 @@ public class User {
         );
     }
 
+    @Step("Получение пользователя без имени")
     public static User getWithoutName() {
         return new User(
                 RandomStringUtils.randomAlphanumeric(10) + "@ya.ru",
@@ -45,6 +50,7 @@ public class User {
         );
     }
 
+    @Step("Получение пользователя без всех полей")
     public static User getWithoutAllFields() {
         return new User(
                 "",
@@ -53,12 +59,15 @@ public class User {
         );
     }
 
+    @Step("Получение электронной почты пользователя")
     public String getEmail() {
         return email;
     }
+    @Step("Получение пароля пользователя")
     public String getPassword() {
         return password;
     }
+    @Step("Получение имени пользователя")
     public String getName(){
         return name;
     }

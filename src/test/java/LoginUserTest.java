@@ -1,3 +1,4 @@
+import io.qameta.allure.junit4.DisplayName;
 import io.restassured.response.ValidatableResponse;
 import org.junit.After;
 import org.junit.Before;
@@ -27,6 +28,7 @@ public class LoginUserTest {
 
 
     @Test
+    @DisplayName("Можно залогиниться")
     public void canLogin(){
         userClient.login()
                 .statusCode(200)
@@ -34,6 +36,7 @@ public class LoginUserTest {
     }
 
     @Test
+    @DisplayName("Нельзя залогиниться с неправильной электронной почтой")
     public void canNotLoginWithWrongEmail() {
         userClient.loginWithWrongEmail()
                 .statusCode(401)
@@ -41,6 +44,7 @@ public class LoginUserTest {
     }
 
     @Test
+    @DisplayName("Нельзя залогиниться с неправильным паролем")
     public void canNotLoginWithWrongPassword() {
         userClient.loginWithWrongPassword()
                 .statusCode(401)
@@ -48,6 +52,7 @@ public class LoginUserTest {
     }
 
     @Test
+    @DisplayName("Нельзя залогиниться с неправильными электронной почтой и паролем")
     public void canNotLoginWithWrongEmailAndPassword() {
         userClient.loginWithWrongEmailAndPassword()
                 .statusCode(401)
